@@ -8,6 +8,15 @@ module Dibujo
     juntar,
     encimar,
     comp,
+    r180,
+    r270,
+    (.-.),
+    (///),
+    (^^^),
+    cuarteto,
+    encimar4,
+    ciclar,
+    pureDib,
     mapDib,
     foldDib,
   )
@@ -53,31 +62,40 @@ comp f n x
   | otherwise = comp f (n - 1) (f x)
 
 -- Rotaciones de múltiplos de 90.
--- r180 :: Dibujo a -> Dibujo a
+r180 :: Dibujo a -> Dibujo a
+r180 = comp rotar 2
 
--- r270 :: Dibujo a -> Dibujo a
+r270 :: Dibujo a -> Dibujo a
+r270 = comp rotar 3
 
 -- Pone una figura sobre la otra, ambas ocupan el mismo espacio.
--- (.-.) :: Dibujo a -> Dibujo a -> Dibujo a
+(.-.) :: Dibujo a -> Dibujo a -> Dibujo a
+(.-.) = Apilar 1 1
 
 -- Pone una figura al lado de la otra, ambas ocupan el mismo espacio.
--- (///) :: Dibujo a -> Dibujo a -> Dibujo a
+(///) :: Dibujo a -> Dibujo a -> Dibujo a
+(///) = Juntar 1 1
 
 -- Superpone una figura con otra.
--- (^^^) :: Dibujo a -> Dibujo a -> Dibujo a
+(^^^) :: Dibujo a -> Dibujo a -> Dibujo a
+(^^^) = Encimar
 
 -- Dadas cuatro dibujos las ubica en los cuatro cuadrantes.
--- cuarteto :: Dibujo a -> Dibujo a -> Dibujo a -> Dibujo a -> Dibujo a
+cuarteto :: Dibujo a -> Dibujo a -> Dibujo a -> Dibujo a -> Dibujo a
+cuarteto p q r s = (p /// q) .-. (r /// s)
 
 -- Una dibujo repetido con las cuatro rotaciones, superpuestas.
--- encimar4 :: Dibujo a -> Dibujo a
+encimar4 :: Dibujo a -> Dibujo a
+encimar4 d = d ^^^ rotar d ^^^ r180 d ^^^ r270 d
 
 -- Cuadrado con la misma figura rotada i * 90, para i ∈ {0, ..., 3}.
 -- No confundir con encimar4!
--- ciclar :: Dibujo a -> Dibujo a
+ciclar :: Dibujo a -> Dibujo a
+ciclar d = cuarteto d (rotar d) (r180 d) (r270 d)
 
 -- Transformar un valor de tipo a como una Basica.
--- pureDib :: a -> Dibujo a
+pureDib :: a -> Dibujo a
+pureDib = Basica
 
 -- map para nuestro lenguaje.
 mapDib :: (a -> b) -> Dibujo a -> Dibujo b
