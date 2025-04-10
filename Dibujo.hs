@@ -8,6 +8,8 @@ module Dibujo
     juntar,
     encimar,
     comp,
+    const2,
+    const4,
     r180,
     r270,
     (.-.),
@@ -19,6 +21,7 @@ module Dibujo
     pureDib,
     mapDib,
     foldDib,
+    foldDibBin,
   )
 where
 
@@ -60,6 +63,12 @@ comp f 0 x = x
 comp f n x
   | n < 0 = error "n no puede ser negativo"
   | otherwise = comp f (n - 1) (f x)
+
+const2 :: a -> b0 -> b1 -> a
+const2 x _ _ = x
+
+const4 :: a -> b0 -> b1 -> b2 -> b3 -> a
+const4 x _ _ _ _ = x
 
 -- Rotaciones de múltiplos de 90.
 r180 :: Dibujo a -> Dibujo a
@@ -127,3 +136,9 @@ foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncimar = go
     go (Apilar x y d1 d2) = fApilar x y (go d1) (go d2)
     go (Juntar x y d1 d2) = fJuntar x y (go d1) (go d2)
     go (Encimar d1 d2) = fEncimar (go d1) (go d2)
+
+-- foldDib solo con el caso base y el caso binario
+foldDibBin :: (a -> b) -> (b -> b -> b) -> Dibujo a -> b
+foldDibBin fBasica fBin = foldDib fBasica id id id f f fBin
+  where
+    f _ _ = fBin
