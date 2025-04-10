@@ -1,7 +1,46 @@
-module Dibujo where
+module Dibujo
+  ( Dibujo,
+    basica,
+    rotar,
+    rotar45,
+    espejar,
+    apilar,
+    juntar,
+    encimar,
+  )
+where
 
 -- Definir el lenguaje via constructores de tipo
--- data Dibujo a =
+data Dibujo a
+  = Basica a
+  | Rotar (Dibujo a)
+  | Rotar45 (Dibujo a)
+  | Espejar (Dibujo a)
+  | Apilar Float Float (Dibujo a) (Dibujo a)
+  | Juntar Float Float (Dibujo a) (Dibujo a)
+  | Encimar (Dibujo a) (Dibujo a)
+  deriving (Eq, Show)
+
+basica :: a -> Dibujo a
+basica = Basica
+
+rotar :: Dibujo a -> Dibujo a
+rotar = Rotar
+
+rotar45 :: Dibujo a -> Dibujo a
+rotar45 = Rotar45
+
+espejar :: Dibujo a -> Dibujo a
+espejar = Espejar
+
+apilar :: Float -> Float -> Dibujo a -> Dibujo a -> Dibujo a
+apilar = Apilar
+
+juntar :: Float -> Float -> Dibujo a -> Dibujo a -> Dibujo a
+juntar = Juntar
+
+encimar :: Dibujo a -> Dibujo a -> Dibujo a
+encimar = Encimar
 
 -- Composición n-veces de una función con sí misma.
 -- comp :: (a -> a) -> Int -> a -> a
