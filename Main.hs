@@ -1,6 +1,7 @@
 module Main where
 
 import Basica.Ejemplo qualified as E
+import Basica.Escher qualified as Escher
 import Dibujo
 import Graphics.Gloss
 import Graphics.Gloss.Data.Point.Arithmetic qualified as V
@@ -55,16 +56,26 @@ ejCentro ancho alto =
       r = moverCentro ancho alto
     }
 
+escherConf :: Float -> Float -> Int -> Escher.Escher -> Conf Escher.Escher
+escherConf ancho alto level basicShape =
+  Conf
+    { basic = Escher.interpBas,
+      fig = Escher.escher level basicShape,
+      width = ancho,
+      height = alto,
+      r = moverCentro ancho alto
+    }
+
 -- Dada una computación que construye una configuración, mostramos por
 -- pantalla la figura de la misma de acuerdo a la interpretación para
 -- las figuras básicas. Permitimos una computación para poder leer
 -- archivos, tomar argumentos, etc.
-inicial :: IO (Conf E.Basica) -> IO ()
+inicial :: IO (Conf a) -> IO ()
 inicial cf =
   cf >>= \cfg ->
     let ancho = (width cfg, 0)
         alto = (0, height cfg)
-        imagen = interp (basic cfg) (fig cfg) (0, 0) ancho alto
+        imagen = r cfg $ interp (basic cfg) (fig cfg) (0, 0) ancho alto
      in display win white . withGrid $ imagen
   where
     grillaGris = color grey $ grilla 10 (0, 0) 100 10
@@ -73,4 +84,5 @@ inicial cf =
 
 win = InWindow "Paradigmas 2025 - Lab1" (500, 500) (0, 0)
 
-main = inicial $ return (ej 100 100)
+main :: IO ()
+main = inicial $ return (escherConf 400 400 5 Escher.Fish)
