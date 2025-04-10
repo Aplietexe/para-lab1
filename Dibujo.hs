@@ -7,6 +7,9 @@ module Dibujo
     apilar,
     juntar,
     encimar,
+    comp,
+    mapDib,
+    foldDib,
   )
 where
 
@@ -43,7 +46,11 @@ encimar :: Dibujo a -> Dibujo a -> Dibujo a
 encimar = Encimar
 
 -- Composición n-veces de una función con sí misma.
--- comp :: (a -> a) -> Int -> a -> a
+comp :: (a -> a) -> Int -> a -> a
+comp f 0 x = x
+comp f n x
+  | n < 0 = error "n no puede ser negativo"
+  | otherwise = comp f (n - 1) (f x)
 
 -- Rotaciones de múltiplos de 90.
 -- r180 :: Dibujo a -> Dibujo a
@@ -73,11 +80,32 @@ encimar = Encimar
 -- pureDib :: a -> Dibujo a
 
 -- map para nuestro lenguaje.
--- mapDib :: (a -> b) -> Dibujo a -> Dibujo b
+mapDib :: (a -> b) -> Dibujo a -> Dibujo b
+mapDib f (Basica d) = Basica $ f d
+mapDib f (Rotar d) = Rotar $ mapDib f d
+mapDib f (Rotar45 d) = Rotar45 $ mapDib f d
+mapDib f (Espejar d) = Espejar $ mapDib f d
+mapDib f (Apilar x y d1 d2) = Apilar x y (mapDib f d1) (mapDib f d2)
+mapDib f (Juntar x y d1 d2) = Juntar x y (mapDib f d1) (mapDib f d2)
+mapDib f (Encimar d1 d2) = Encimar (mapDib f d1) (mapDib f d2)
 
 -- Funcion de fold para Dibujos a
--- foldDib :: (a -> b) -> (b -> b) -> (b -> b) -> (b -> b) ->
---        (Float -> Float -> b -> b -> b) ->
---        (Float -> Float -> b -> b -> b) ->
---        (b -> b -> b) ->
---        Dibujo a -> b
+foldDib ::
+  (a -> b) ->
+  (b -> b) ->
+  (b -> b) ->
+  (b -> b) ->
+  (Float -> Float -> b -> b -> b) ->
+  (Float -> Float -> b -> b -> b) ->
+  (b -> b -> b) ->
+  Dibujo a ->
+  b
+foldDib fBasica fRotar fRotar45 fEspejar fApilar fJuntar fEncimar = go
+  where
+    go (Basica d) = fBasica d
+    go (Rotar d) = fRotar $ go d
+    go (Rotar45 d) = fRotar45 $ go d
+    go (Espejar d) = fEspejar $ go d
+    go (Apilar x y d1 d2) = fApilar x y (go d1) (go d2)
+    go (Juntar x y d1 d2) = fJuntar x y (go d1) (go d2)
+    go (Encimar d1 d2) = fEncimar (go d1) (go d2)
