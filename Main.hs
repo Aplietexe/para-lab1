@@ -1,5 +1,6 @@
 module Main where
 
+import Basica.BasicaDoble qualified as E2
 import Basica.Ejemplo qualified as E
 import Basica.Escher qualified as Escher
 import Dibujo
@@ -66,6 +67,15 @@ escherConf ancho alto level basicShape =
       r = moverCentro ancho alto
     }
 
+dobleConf ancho alto =
+  Conf
+    { basic = E2.interpBas,
+      fig = E2.ejemplo,
+      width = ancho,
+      height = alto,
+      r = moverCentro ancho alto
+    }
+
 -- Dada una computación que construye una configuración, mostramos por
 -- pantalla la figura de la misma de acuerdo a la interpretación para
 -- las figuras básicas. Permitimos una computación para poder leer
@@ -76,7 +86,7 @@ inicial cf =
     let ancho = (width cfg, 0)
         alto = (0, height cfg)
         imagen = r cfg $ interp (basic cfg) (fig cfg) (0, 0) ancho alto
-     in display win white . withGrid $ imagen
+     in display win white imagen
   where
     grillaGris = color grey $ grilla 10 (0, 0) 100 10
     withGrid p = pictures [p, grillaGris]
@@ -85,4 +95,7 @@ inicial cf =
 win = InWindow "Paradigmas 2025 - Lab1" (500, 500) (0, 0)
 
 main :: IO ()
-main = inicial $ return (escherConf 400 400 5 Escher.Fish)
+-- main = inicial $ return (escherConf 400 400 5 Escher.Fish)
+main = inicial $ return (ejCentro 200 200)
+
+-- main = inicial $ return (dobleConf 400 400)

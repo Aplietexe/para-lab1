@@ -7,7 +7,7 @@ import Interp
 data Basica = Triangulo | TrianguloVioleta
 
 ejemplo :: Dibujo Basica
-ejemplo = Apilar 1 1 (Figura Triangulo) (Rotar (Figura TrianguloVioleta))
+ejemplo = apilar 1 1 (basica Triangulo) (rotar (basica TrianguloVioleta))
 
 interpBas :: Basica -> ImagenFlotante
 interpBas Triangulo = triangulo
