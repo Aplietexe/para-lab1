@@ -31,7 +31,7 @@ esRot360 d = foldDib (const 0) (+ 1) (const 0) (const 0) (const4 0) (const4 0) (
 esFlip2 :: Pred (Dibujo a)
 esFlip2 d = foldDib (const 0) (const 0) (const 0) (+ 1) (const4 0) (const4 0) (const2 0) d >= 2
 
-data Superfluo = RotacionSuperflua | FlipSuperfluo
+data Superfluo = RotacionSuperflua | FlipSuperfluo deriving (Eq, Show)
 
 ---- Chequea si el dibujo tiene una rotacion superflua
 errorRotacion :: Dibujo a -> [Superfluo]
